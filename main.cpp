@@ -328,7 +328,7 @@ switch (weekday)
     case Weekday::Wednesday: name = "Wednesday"; break;
     case Weekday::Thursday: name = "Thursday"; break;
     case Weekday::Friday: name = "Friday"; break;
-    case Weekday::Saturday: name = "Sunday"; break;
+    case Weekday::Saturday: name = "Saturday"; break;
 
 }
 
