@@ -1,8 +1,8 @@
 /*
- * Full Name:     [Your Name]
- * Student ID:    [Your NUID]
+ * Full Name:     [Preston Ng]
+ * Student ID:    [002096670]
  * Course:        EECE 2140 - Computing Fundamentals for Engineers
- * Section:       [Your Section]
+ * Section:       [05]
  * Semester:      Fall 2026
  * Assignment:    Homework 2 - Calendar Toolkit
  * Compilation:   g++ -std=c++11 main.cpp -o main
@@ -176,7 +176,23 @@ int main()
 //              2100 are not).
 bool isLeapYear(int year)
 {
-    return false;   // placeholder
+    if (year % 400 == 0) //if divisible by 400 equals leap year 
+    {
+        return true;
+    }
+    else if (year % 100 == 0) //if not divisible by 400 gets checked by this, if divisible by 100 not a leap year
+    {
+        return false;
+    }
+    else if (year % 4 == 0)  //if divisible by 4 equals leap year
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    };  //or its just false
+
 }
 
 // TODO: daysInMonth
@@ -187,7 +203,32 @@ bool isLeapYear(int year)
 //                 for February, depending on whether year is a leap year).
 int daysInMonth(int month, int year)
 {
-    return 0;   // placeholder
+    assert(month >= 1 && month <=12);
+
+    switch (month)
+    {
+        case 1:
+        case 3:
+        case 5:
+        case 7:
+        case 8:
+        case 10:
+        case 12:
+        return 31;
+        case 4:
+        case 6:
+        case 9:
+        case 11:
+        return 30;
+        case 2:
+        if (isLeapYear(year))
+        {
+            return 29;
+        }
+    return 28;
+
+    }
+    return 0;
 }
 
 // TODO: isValidDate
@@ -199,7 +240,15 @@ int daysInMonth(int month, int year)
 //   Constraint: use daysInMonth for the number of days in the month.
 bool isValidDate(int day, int month, int year)
 {
-    return false;   // placeholder
+    if (year < MIN_YEAR || year > MAX_YEAR)
+    {
+        return false;
+    }
+    if (month <1 || month > 12)
+    {
+        return false;
+    }
+    return day >= 1 && day <= daysInMonth(month, year);   // placeholder
 }
 
 // TODO: daysSince1900
@@ -209,8 +258,27 @@ bool isValidDate(int day, int month, int year)
 //                 (0 for 1 January 1900, 1 for 2 January 1900, 31 for
 //                 1 February 1900, and so on).
 int daysSince1900(int day, int month, int year)
+{ 
+    assert(isValidDate(day, month, year));
+
+    int days = 0;
+
+    for (int y = 1900; y < year; ++y)
+    {
+        for (int m = 1; m <= 12; ++m)
+        days += daysInMonth(m, y);
+    }
+
+
+for (int m = 1; m < month; ++m)
 {
-    return 0;   // placeholder
+    days += daysInMonth(m, year);
+}
+
+days += day - 1;
+
+    return days;   // placeholder
+
 }
 
 // TODO: dayOfWeek
@@ -221,8 +289,23 @@ int daysSince1900(int day, int month, int year)
 //   Constraint:   use daysSince1900.
 Weekday dayOfWeek(int day, int month, int year)
 {
-    return Weekday::Sunday;   // placeholder
+    assert(isValidDate(day, month, year));
+
+    const Weekday order[7] = {
+        Weekday::Monday,
+        Weekday::Tuesday,
+        Weekday::Wednesday,
+        Weekday::Thursday,
+        Weekday::Friday,
+        Weekday::Saturday,
+        Weekday::Sunday,
+    };
+
+
+    return order[daysSince1900(day, month, year) %7];  // placeholder
+
 }
+
 
 // TODO: printWeekdayName
 //   Parameters: weekday - any Weekday value;
@@ -235,6 +318,29 @@ Weekday dayOfWeek(int day, int month, int year)
 //   Returns:    nothing.
 void printWeekdayName(Weekday weekday, bool abbreviated)
 {
+std::string name;
+
+switch (weekday)
+{
+    case Weekday::Sunday: name = "Sunday"; break;
+    case Weekday::Monday: name = "Monday"; break;
+    case Weekday::Tuesday: name = "Tuesday"; break;
+    case Weekday::Wednesday: name = "Wednesday"; break;
+    case Weekday::Thursday: name = "Thursday"; break;
+    case Weekday::Friday: name = "Friday"; break;
+    case Weekday::Saturday: name = "Sunday"; break;
+
+}
+
+if (abbreviated)
+{
+    std::cout << name.substr(0, 3);
+}
+else
+{
+    std::cout << name;
+}
+
 }
 
 // TODO: printDate
@@ -246,7 +352,23 @@ void printWeekdayName(Weekday weekday, bool abbreviated)
 //   Returns:      nothing.
 void printDate(int day, int month, int year)
 {
-}
+    assert(isValidDate(day, month, year));
+
+    std::cout << year <<'-';
+
+    if (month < 10)
+    {
+        std::cout << '0';
+    }
+    std::cout << month << '-';
+
+    if (day < 10)
+    {
+        std::cout << '0';
+    }
+    std::cout << day;
+
+    }
 
 // TODO: daysBetween
 //   Parameters:   day1, month1, year1 - the first date;
@@ -258,7 +380,10 @@ void printDate(int day, int month, int year)
 //   Constraint:   use daysSince1900.
 int daysBetween(int day1, int month1, int year1, int day2, int month2, int year2)
 {
-    return 0;   // placeholder
+    assert(isValidDate(day1, month1, year1));
+    assert(isValidDate(day2, month2, year2));
+    
+    return daysSince1900(day2, month2, year2) - daysSince1900(day1, month1, year1);   // placeholder
 }
 
 // TODO: randomInRange
@@ -270,7 +395,17 @@ int daysBetween(int day1, int month1, int year1, int day2, int month2, int year2
 //   Constraint:   do not call srand in this function.
 int randomInRange(int low, int high)
 {
-    return low;   // placeholder
+    assert(low <= high);
+    assert(high - low <= RAND_MAX);
+
+    int range = high - low;
+
+    if (range == RAND_MAX)
+{
+    return low + rand();
+
+}
+    return low + rand() % (range + 1);   // placeholder
 }
 
 // TODO: randomDate
@@ -289,4 +424,10 @@ int randomInRange(int low, int high)
 //   Constraint:   do not call srand in this function.
 void randomDate(int& day, int& month, int& year, int minYear, int maxYear)
 {
+    assert(MIN_YEAR <= minYear && minYear <= maxYear && maxYear <= MAX_YEAR);
+
+    year = randomInRange(minYear, maxYear);
+    month = randomInRange(1, 12);
+    day = randomInRange(1, daysInMonth(month, year));
+
 }
